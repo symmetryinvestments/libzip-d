@@ -1,0 +1,16 @@
+name "libzip-d"
+description "wrapper over libzip"
+authors "Emil Nicolaie Perhinschi"
+copyright "Copyright © 2021 Symmetry Investments"
+license "BSD 3-clause"
+targetType "library"
+libs "zip"
+
+subPackage {
+    name "manual_test"
+    source_paths "./t/"
+    dependency "libzip-d" path="./"
+    targetName "libzip_manual_tests"
+    targetType "executable"
+    mainSourceFile "t/manual_test.d"
+}
