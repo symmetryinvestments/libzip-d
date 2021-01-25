@@ -82,18 +82,26 @@ void add_file_to_archive(string file_path, string archive_path, int add_root_pat
     }
     zip_close(archive);
     list_entries(archive_path);
+    extract_all("/tmp/test_archive", "t/archive.zip");
 }
 
-/*
-void extract_all(string destination_path, string zip_file_path)
+
+void extract_all(string destination_path, string zip_file_path) {
     import std.string: toStringz;
+    import core.stdc.errno;
+    import core.stdc.string: strlen;
+    import std.stdio: File;
+    import std.format: format;
+    import std.file: exists, mkdirRecurse;
+    import std.path: buildPath;
+    import std.conv: to;
 
     int errors = 0; 
     zip_t* archive = zip_open(zip_file_path.toStringz, ZIP_RDONLY, &errors);
 
     if (errors) {
-        char buf[100];
-        zip_error_to_str(buf, sizeof(buf), errors, errno);
+        char[100] buf;
+        zip_error_to_str(buf.ptr, buf.length, errors, errno);
         throw new Exception(format!"something wrong while opening zip archive `%s': %s"( zip_file_path, buf));
     }
 
@@ -101,56 +109,54 @@ void extract_all(string destination_path, string zip_file_path)
         throw new Exception("archive is null");
     } 
 
-        // printf("\n\n### before making destination dir %s\n", destination_path);
-        make_destination_dir(destination_path);
-        // printf("\n\n### after making destination dir %s\n", destination_path);
+    if (!exists(destination_path)) {
+        mkdirRecurse(destination_path);
+    }
         
-        int index;
-        int number_of_entries = zip_get_num_entries(archive, ZIP_FL_UNCHANGED);
+    
+    long number_of_entries = zip_get_num_entries(archive, ZIP_FL_UNCHANGED);
      
-        for (index = 0; index < number_of_entries; index++) {
+    for (long index = 0; index < number_of_entries; index++) {
             
             zip_stat_t stats_buff;
             if (zip_stat_index(archive, index, 0, &stats_buff) != 0 ) {
-                croak("cannot read the stats for index %i in archive %s", index, zip_file_path);
+                throw new Exception(format!"cannot read the stats for index %d in archive %s"(index, zip_file_path) );
             }
             
-            const char *file_name_string = zip_get_name(archive, index, ZIP_FL_ENC_GUESS);
+            const char* file_name_string = zip_get_name(archive, index, ZIP_FL_ENC_GUESS);
             // printf("\n### file to extract %s\n\n", file_name_string);
-            int name_length = strlen(file_name_string);            
+            ulong name_length = strlen(file_name_string);            
             if (file_name_string[name_length - 1] == '/') {
-                make_extracted_dir(destination_path, file_name_string);
+                string destination_path_full = destination_path.buildPath(file_name_string.to!string);
+                if (!exists(destination_path_full)) {
+                    destination_path_full.mkdirRecurse;
+                }
             } else {
                 zip_file_t *file_entry = zip_fopen_index(archive, index, 0);
                 if (!file_entry) {
-                    croak(" file %s cound not be opened", file_name_string);
+                    throw new Exception(format!"file %s cound not be opened"(file_name_string) );
                 }
-                
-                int destination_file = open_destination_file_for_writing(destination_path, file_name_string);
+                string destination_path_full = destination_path.buildPath(file_name_string.to!string);
+                File destination_file = File(destination_path_full, "wb");
+
                 int sum = 0;
-                char entry_buffer[1024];
-                int read_length;
+                char[1024] entry_buffer;
+                size_t read_length;
                 ssize_t wrote_length;
                 while (sum != stats_buff.size) {
-                    read_length = zip_fread(file_entry, entry_buffer, 1024);
+                    read_length = zip_fread(file_entry, entry_buffer.ptr, 1024);
                     if (read_length < 0) {
-                        croak("failed to read from archived file %s", file_name_string);
+                        throw new Exception( format!"failed to read from archived file %s"(file_name_string) );
                     }
-                    wrote_length = write(destination_file, entry_buffer, read_length);
-                    if (wrote_length != read_length) {
-                        croak("something wrong when writing file to disk: read length %i is not equal with write length%i\n", read_length, wrote_length);
-                    }
+                    destination_file.rawWrite(entry_buffer[0..read_length]);
                     sum += read_length;
                 }
-                close(destination_file);
+                destination_file.close();
                 zip_fclose(file_entry);
             }
         }
         
     if (zip_close(archive) != 0) {
-        croak("failed to close the archive");
+        throw new Exception("failed to close the archive");
     }
-    
-    // printf("### after closing the archive\n");
 }
-*/
