@@ -9,7 +9,7 @@ void main() {
     string[] result = list_entries(archive_path);
     writeln(" ............... done");
     string file_path = "t/add_to_archive_later.txt";
-    add_file_to_archive(file_path, archive_path, false);
+    add_to_archive(archive_path, file_path, false);
 }
 
 string[] list_entries(string archive_path) {
@@ -36,7 +36,7 @@ string[] list_entries(string archive_path) {
 }
 
 
-void add_file_to_archive(string file_path, string archive_path, int add_root_path) {
+void add_to_archive(string archive_path, string file_path, bool add_root_path) {
     import core.stdc.stdio: fopen;
     import core.stdc.errno;
 
@@ -46,8 +46,6 @@ void add_file_to_archive(string file_path, string archive_path, int add_root_pat
 
     import std.path: baseName;
 
-    zip_int64_t index;
-    
     int error = 0;
     // https://libzip.org/documentation/zip_open.html
     zip_t * archive = zip_open(archive_path.toStringz, ZIP_CREATE, &error);
@@ -56,30 +54,8 @@ void add_file_to_archive(string file_path, string archive_path, int add_root_pat
         throw new Exception(format!"could not open or create archive: '%s'"(strerror(error) ));
     }
 
-    libzipd._IO_FILE* file_pointer = cast(libzipd._IO_FILE*) file_path.toStringz.fopen( "r" );
-    if (file_pointer == NULL) {
-        throw new Exception(format!"can't open input file '%s' %s"( file_path, strerror(errno) ));
-    }
-    
-    ulong start = 0;
-    long len = -1;
-    zip_source_t *file_source = archive.zip_source_filep(file_pointer, start, len);
-    if ( file_source  == NULL) {
-        throw new Exception(format!"error creating file source for '%s': %s"( file_path, zip_strerror(archive) ) );
-    }
-                
-    if (add_root_path) {
-        index = zip_file_add(archive, file_path.toStringz, file_source, ZIP_FL_OVERWRITE);    
-    } else {
-        string file_basename = baseName(file_path);
-        index = zip_file_add(archive, file_basename.toStringz, file_source, ZIP_FL_OVERWRITE);    
-    }
-    
-    long made_it = cast(long) index;
-    if ( made_it == -1 ) {
-        zip_source_free(file_source);
-        throw new Exception(format!"failed to add file '%s': '%s'"( file_path, zip_strerror(archive)));
-    }
+    add_to_archive(archive, file_path, add_root_path);
+
     zip_close(archive);
     list_entries(archive_path);
     extract_all("/tmp/test_archive", "t/archive.zip");
@@ -96,7 +72,7 @@ void extract_all(string destination_path, string zip_file_path) {
     import std.path: buildPath;
     import std.conv: to;
 
-    int errors = 0; 
+    int errors = 0;
     zip_t* archive = zip_open(zip_file_path.toStringz, ZIP_RDONLY, &errors);
 
     if (errors) {
@@ -107,25 +83,25 @@ void extract_all(string destination_path, string zip_file_path) {
 
     if (archive is null) {
         throw new Exception("archive is null");
-    } 
+    }
 
     if (!exists(destination_path)) {
         mkdirRecurse(destination_path);
     }
-        
-    
+
+
     long number_of_entries = zip_get_num_entries(archive, ZIP_FL_UNCHANGED);
-     
+
     for (long index = 0; index < number_of_entries; index++) {
-            
+
             zip_stat_t stats_buff;
             if (zip_stat_index(archive, index, 0, &stats_buff) != 0 ) {
                 throw new Exception(format!"cannot read the stats for index %d in archive %s"(index, zip_file_path) );
             }
-            
+
             const char* file_name_string = zip_get_name(archive, index, ZIP_FL_ENC_GUESS);
             // printf("\n### file to extract %s\n\n", file_name_string);
-            ulong name_length = strlen(file_name_string);            
+            ulong name_length = strlen(file_name_string);
             if (file_name_string[name_length - 1] == '/') {
                 string destination_path_full = destination_path.buildPath(file_name_string.to!string);
                 if (!exists(destination_path_full)) {
@@ -155,8 +131,72 @@ void extract_all(string destination_path, string zip_file_path) {
                 zip_fclose(file_entry);
             }
         }
-        
+
     if (zip_close(archive) != 0) {
         throw new Exception("failed to close the archive");
+    }
+}
+
+void archive_folder(string path, string archive_path, bool add_root_path) {
+    import std.string: toStringz;
+    import std.format: format;
+    import std.file: dirEntries, SpanMode;
+
+    int level = 0;
+    int error = 0;
+    zip_t *archive = zip_open(archive_path.toStringz, ZIP_CREATE, &error);
+    if (error) {
+        throw new Exception(format!"failed to create the archive with path %s"(archive_path) );
+    }
+
+    if (add_root_path) {
+        zip_int64_t first_index = zip_dir_add(archive, path.toStringz, ZIP_FL_ENC_UTF_8);
+        if ( first_index == -1 ) {
+            throw new Exception(format!"failed to add directory %s : %s"(path, zip_strerror(archive)));
+        }
+    }
+
+    foreach (dir_entry; path.dirEntries(SpanMode.depth)) {
+        add_to_archive(archive, dir_entry.name, add_root_path);
+    }
+
+    // walk_directory_recursive(path, level, archive, add_root_path);
+
+    if (zip_close(archive) == -1) {
+        throw new Exception("can't close zip archive");
+    }
+}
+
+void add_to_archive(zip_t* archive, string file_path, bool add_root_path) {
+    import std.string: toStringz;
+    import std.format: format;
+    import core.stdc.errno;
+    import core.stdc.string: strerror;
+    import std.path: baseName;
+
+    libzipd._IO_FILE* file_pointer = cast(libzipd._IO_FILE*) file_path.toStringz.fopen( "r" );
+    if (file_pointer == NULL) {
+        throw new Exception(format!"can't open input file '%s' %s"( file_path, strerror(errno) ));
+    }
+
+    ulong start = 0;
+    long len = -1;
+    zip_source_t *file_source = archive.zip_source_filep(file_pointer, start, len);
+    if ( file_source  == NULL) {
+        throw new Exception(format!"error creating file source for '%s': %s"( file_path, zip_strerror(archive) ) );
+    }
+
+    zip_int64_t index;
+    if (add_root_path) {
+        index = zip_file_add(archive, file_path.toStringz, file_source, ZIP_FL_OVERWRITE);
+    } else {
+        string file_basename = baseName(file_path);
+        index = zip_file_add(archive, file_basename.toStringz, file_source, ZIP_FL_OVERWRITE);
+    }
+
+    long made_it = cast(long) index;
+    if ( made_it == -1 ) {
+        zip_source_free(file_source);
+        throw new Exception(format!"failed to add file '%s': '%s'"( file_path, zip_strerror(archive)));
     }
 }
