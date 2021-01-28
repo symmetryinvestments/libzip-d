@@ -1,4 +1,4 @@
-module libzipd;
+module libzipd.libziph;
 
 
 /*
