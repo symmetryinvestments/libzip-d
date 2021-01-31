@@ -1,10 +1,11 @@
 module libzipd.simplezip;
 
 import libzipd.libziph;
+import std.string: toStringz;
 
 struct Archive
 {
-    string password = "";
+    bool password_was_set = false;
     zip_t* archive;
 
     this(string destination_file)
@@ -12,9 +13,13 @@ struct Archive
         this.open(destination_file);
     }
 
+    void set_password(string pass) {
+        this.password_was_set = true;
+        // this.archive.zip_file_set_encryption()
+    }
+
     void open(string destination_file)
     {
-        import std.string : toStringz;
         import std.format : format;
         import core.stdc.errno;
 
@@ -37,7 +42,6 @@ struct Archive
 
     void create(string destination_file)
     {
-        import std.string : toStringz;
         import std.format : format;
         import core.stdc.errno;
         import std.file: exists;
@@ -65,7 +69,6 @@ struct Archive
 
     string[] list_entries()
     {
-        import std.string : toStringz;
         import std.conv : to;
 
         long number_of_entries = this.entries_count();
@@ -78,31 +81,28 @@ struct Archive
         return result;
     }
 
-    void add_folder(string path, bool add_root_path = true)
-    {
-        import std.string : toStringz;
+    void add_folder(string path) {
         import std.format : format;
         import std.file : dirEntries, SpanMode;
+        import std.path: relativePath;
 
-        if (add_root_path)
-        {
-            zip_int64_t first_index = this.archive.zip_dir_add(path.toStringz, ZIP_FL_ENC_UTF_8);
-            if (first_index == -1)
-            {
-                throw new Exception(format!"failed to add directory %s : %s"(path,
-                        zip_strerror(archive)));
-            }
-        }
+        // add only the folders under the one in the arguments
+        string strip_path = path;
 
         foreach (dir_entry; path.dirEntries(SpanMode.depth)) {
             import std.stdio: writeln;
-            writeln(dir_entry.name);
             if (dir_entry.isDir) {
-                this.add_folder(dir_entry.name, add_root_path);
+                string stripped_path = dir_entry.name.relativePath(strip_path);
+                zip_int64_t first_index;
+                first_index = this.archive.zip_dir_add(stripped_path.toStringz, ZIP_FL_ENC_UTF_8);
+
+                if ( first_index == -1 ) {
+                    throw new Exception(format!"failed to add directory %s : %s"(path, zip_strerror(this.archive)));
+                }
             }
             else if (dir_entry.isFile)
             {
-                this.add_file(dir_entry.name, add_root_path);
+                this.add_file(dir_entry.name, strip_path);
             }
             else
             {
@@ -113,13 +113,11 @@ struct Archive
         }
     }
 
-    void add_file(string file_path, bool add_root_path)
-    {
-        import std.string : toStringz;
+    void add_file(string file_path, string strip_path = "") {
         import std.format : format;
         import core.stdc.errno;
         import core.stdc.string : strerror;
-        import std.path : baseName;
+        import std.path : baseName, relativePath;
 
         libzipd.libziph._IO_FILE* file_pointer = cast(libzipd.libziph._IO_FILE*) file_path.toStringz.fopen("r");
         if (file_pointer is null)
@@ -137,18 +135,13 @@ struct Archive
         }
 
         zip_int64_t index;
-        if (add_root_path)
-        {
-            index = zip_file_add(archive, file_path.toStringz, file_source, ZIP_FL_OVERWRITE);
-        }
-        else
-        {
-            string file_basename = baseName(file_path);
-            index = zip_file_add(archive, file_basename.toStringz, file_source, ZIP_FL_OVERWRITE);
+        if (strip_path != "") {
+            index = zip_file_add(archive, file_path.relativePath(strip_path).toStringz, file_source, ZIP_FL_OVERWRITE);
+        } else {
+           index = zip_file_add(archive, file_path.toStringz, file_source, ZIP_FL_OVERWRITE);
         }
 
-        long made_it = cast(long) index;
-        if (made_it == -1)
+        if (index == -1)
         {
             zip_source_free(file_source);
             throw new Exception(format!"failed to add file '%s': '%s'"(file_path,
@@ -158,7 +151,6 @@ struct Archive
 
     void extract(string destination_path)
     {
-        import std.string : toStringz;
         import core.stdc.errno;
         import core.stdc.string : strlen;
         import std.stdio : File;
@@ -231,26 +223,36 @@ struct Archive
         }
     }
 
-    void close()
-    {
+    void finish() {
         this.archive.zip_close();
     }
 
-    ~this()
-    {
-        this.close();
+    void close() {
+        zip_close(this.archive);
     }
 
-    long entries_count()
-    {
+    void discard() {
+        this.archive.zip_discard();
+    }
+
+    void revert(){
+        this.archive.zip_unchange_all();
+    }
+
+    // ~this()
+    // {
+    //     import std.stdio:writeln;
+
+    //     this.archive.zip_close();
+    //     if (this.archive is null) {
+    //         writeln("aaaaaaaaaaaaaaaaa ");
+    //     } else {
+    //         writeln("noooooooooooooot nuuuuuuuuuuuul ", this.archive);
+    //     }
+    // }
+
+    long entries_count() {
         return zip_get_num_entries(this.archive, ZIP_FL_UNCHANGED);
     }
 }
 
-void unzip(string destination_path, string zip_file_path)
-{
-    Archive archive = Archive();
-    archive.open(zip_file_path);
-    archive.extract(destination_path);
-
-}

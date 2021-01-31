@@ -5,15 +5,15 @@ void main() {
 
     import zug.tap;
     import libzipd;
-    import std.stdio: writeln;
+    debug import std.stdio: writeln;
 
     auto tap = Tap("t001.d");
     tap.verbose(true);
     string extract_to_path = make_temp_path();
-    bool include_root = false;
 
     {
-        auto archive = Archive("t/archive.zip");
+        auto archive = Archive();
+        archive.open("t/archive.zip");
         string[] entries_names = archive.list_entries;
         tap.ok( entries_names.length == 4, "number of entries in archive as expected");
         tap.ok( entries_names[0] == "archive/", "first entry in archive as expected");
@@ -22,36 +22,52 @@ void main() {
     }
 
     {
+
         import std.file : dirEntries, SpanMode, DirEntry;
         import std.array: array;
-        import std.conv: to;
 
         Archive archive = Archive();
+        writeln("before archive.open()");
         archive.open("t/archive.zip");
-        debug writeln(extract_to_path);
+
+        writeln(extract_to_path);
         archive.extract(extract_to_path);
         archive.close();
         DirEntry[] extracted = extract_to_path.dirEntries(SpanMode.depth).array;
+        writeln("after archive.open() and extract block");
         tap.ok(extracted.length == 4, "extracted the expected number of files/folders" );
     }
 
     {
+        import std.path: buildPath;
+        import std.stdio: writeln;
+
         string new_archive_file_path = make_temp_path ~ ".zip";
+        writeln(new_archive_file_path);
         Archive archive = Archive();
         archive.create(new_archive_file_path);
         archive.add_folder(extract_to_path);
+        archive.add_file("/etc/fstab");
+        archive.add_file("/etc/fstab", "/etc/");
         archive.close();
-        writeln(new_archive_file_path);
+        archive.open(new_archive_file_path);
+        string[] entries_names = archive.list_entries;
+        writeln(entries_names);
+        tap.ok( entries_names.length == 6, "number of entries in archive as expected");
+        tap.ok( entries_names[0] == "archive/another_test.txt", "first entry in archive as expected");
+        tap.ok( entries_names[$ - 1] == "fstab", "last entry in archive as expected");
+        archive.close();
+        debug writeln(new_archive_file_path);
     }
 
-    // string new_archive_path = make_temp_path() ~ ".zip";
-    // {
-    //     Archive archive = Archive();
-    //     archive.password("asdf1234");
-    //     archive.open(new_archive_path);
-    //     archive.add_folder(extract_to_path);
-    //     archive.zip();
-    // }
+    string new_archive_path = make_temp_path() ~ ".zip";
+    {
+        Archive archive = Archive();
+        archive.create(new_archive_path);
+        archive.set_password("asdf1234");
+        archive.add_folder(extract_to_path);
+        archive.close();
+    }
 
     // {
     //     string new_destination = make_temp_path();
@@ -73,5 +89,5 @@ string make_temp_path() {
     import std.path: buildPath;
     import std.uuid: randomUUID;
 
-    return buildPath(tempDir, randomUUID().toString);
+    return buildPath(tempDir, "libzipd_tests", randomUUID().toString);
 }
