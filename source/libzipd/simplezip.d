@@ -2,10 +2,9 @@ module libzipd.simplezip;
 
 import libzipd.libziph;
 import std.string: toStringz;
-
+import std.conv: to;
 struct Archive
 {
-    bool password_was_set = false;
     zip_t* archive;
 
     this(string destination_file)
@@ -13,9 +12,10 @@ struct Archive
         this.open(destination_file);
     }
 
+    // set the default password after opening the archive
+    // this works only for extracting files
     void set_password(string pass) {
-        this.password_was_set = true;
-        // this.archive.zip_file_set_encryption()
+        this.archive.zip_set_default_password(pass.toStringz);
     }
 
     void open(string destination_file)
@@ -75,7 +75,7 @@ struct Archive
         string[] result;
         for (int i = 0; i < number_of_entries; i++)
         {
-            result ~= archive.zip_get_name(i, ZIP_FL_ENC_GUESS).to!string;
+            result ~= archive.zip_get_name(i, ZIP_FL_ENC_UTF_8).to!string;
         }
 
         return result;
@@ -165,33 +165,30 @@ struct Archive
         }
 
         long number_of_entries = this.entries_count();
-
+        // this.archive.zip_set_default_password();
         for (long index = 0; index < number_of_entries; index++)
         {
             zip_stat_t stats_buff;
-            if (zip_stat_index(archive, index, 0, &stats_buff) != 0)
+            if (zip_stat_index(this.archive, index, 0, &stats_buff) != 0)
             {
                 throw new Exception( format!"cannot read the stats for index %d"(index) );
             }
 
-            const char* file_name_string = zip_get_name(archive, index, ZIP_FL_ENC_GUESS);
+            const char* file_name_string = zip_get_name(this.archive, index, ZIP_FL_ENC_UTF_8);
             // printf("\n### file to extract %s\n\n", file_name_string);
             ulong name_length = strlen(file_name_string);
             if (file_name_string[name_length - 1] == '/')
             {
-                string destination_path_full = destination_path.buildPath(
-                        file_name_string.to!string);
-                if (!exists(destination_path_full))
-                {
+                string destination_path_full = destination_path.buildPath(file_name_string.to!string);
+                if (!exists(destination_path_full)) {
                     destination_path_full.mkdirRecurse;
                 }
             }
             else
             {
-                zip_file_t* file_entry = zip_fopen_index(archive, index, 0);
-                if (!file_entry)
-                {
-                    throw new Exception(format!"file %s cound not be opened"(file_name_string));
+                zip_file_t* file_entry = zip_fopen_index(this.archive, index, 0);
+                if (file_entry is null) {
+                    throw new Exception(format!"file %s could not be opened: %s"(file_name_string, zip_strerror(this.archive).to!string ));
                 }
                 string destination_path_full = destination_path.buildPath(
                         file_name_string.to!string);

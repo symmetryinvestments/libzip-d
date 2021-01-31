@@ -62,10 +62,17 @@ void main() {
 
     string new_archive_path = make_temp_path() ~ ".zip";
     {
+        import std.file: exists;
+
+        string temp_folder = make_temp_path();
+        writeln(temp_folder);
+
         Archive archive = Archive();
-        archive.create(new_archive_path);
+        archive.open("t/archive_pass.zip");
+        // first open then set password, else it will not work
         archive.set_password("asdf1234");
-        archive.add_folder(extract_to_path);
+        archive.extract(temp_folder);
+        tap.ok((temp_folder ~ "/archive/test.txt").exists);
         archive.close();
     }
 
