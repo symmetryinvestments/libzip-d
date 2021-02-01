@@ -165,7 +165,7 @@ struct Archive
         }
 
         long number_of_entries = this.entries_count();
-        // this.archive.zip_set_default_password();
+
         for (long index = 0; index < number_of_entries; index++)
         {
             zip_stat_t stats_buff;
@@ -186,6 +186,8 @@ struct Archive
             }
             else
             {
+                import std.stdio: writeln;
+                writeln(index);
                 zip_file_t* file_entry = zip_fopen_index(this.archive, index, 0);
                 if (file_entry is null) {
                     throw new Exception(format!"file %s could not be opened: %s"(file_name_string, zip_strerror(this.archive).to!string ));
@@ -250,6 +252,14 @@ struct Archive
 
     long entries_count() {
         return zip_get_num_entries(this.archive, ZIP_FL_UNCHANGED);
+    }
+
+    static string make_temp_path() {
+        import std.file: tempDir;
+        import std.path: buildPath;
+        import std.uuid: randomUUID;
+
+        return buildPath(tempDir, "libzipd_temp", randomUUID().toString);
     }
 }
 

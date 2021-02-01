@@ -9,7 +9,8 @@ void main() {
 
     auto tap = Tap("t001.d");
     tap.verbose(true);
-    string extract_to_path = make_temp_path();
+    string extract_to_path = Archive.make_temp_path();
+
 
     {
         auto archive = Archive();
@@ -42,7 +43,7 @@ void main() {
         import std.path: buildPath;
         import std.stdio: writeln;
 
-        string new_archive_file_path = make_temp_path ~ ".zip";
+        string new_archive_file_path = Archive.make_temp_path() ~ ".zip";
         writeln(new_archive_file_path);
         Archive archive = Archive();
         archive.create(new_archive_file_path);
@@ -60,11 +61,11 @@ void main() {
         debug writeln(new_archive_file_path);
     }
 
-    string new_archive_path = make_temp_path() ~ ".zip";
+    string new_archive_path = Archive.make_temp_path() ~ ".zip";
     {
         import std.file: exists;
 
-        string temp_folder = make_temp_path();
+        string temp_folder = Archive.make_temp_path();
         writeln(temp_folder);
 
         Archive archive = Archive();
@@ -74,6 +75,15 @@ void main() {
         archive.extract(temp_folder);
         tap.ok((temp_folder ~ "/archive/test.txt").exists);
         archive.close();
+    }
+
+    {
+
+        string in_path = "t/libreoffice_test.xlsx";
+        string password = "asdf1234";
+        string out_path = Archive.make_temp_path ~ ".xlsx";
+        writeln([ in_path, password, out_path ]);
+        strip_password(in_path, password, out_path);
     }
 
     // {
@@ -91,10 +101,3 @@ void main() {
     tap.report();
 }
 
-string make_temp_path() {
-    import std.file: tempDir;
-    import std.path: buildPath;
-    import std.uuid: randomUUID;
-
-    return buildPath(tempDir, "libzipd_tests", randomUUID().toString);
-}
