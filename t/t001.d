@@ -1,7 +1,5 @@
 /+ dub.json: { "dependencies": { "zug-tap": "*", "libzip-d": { "path": "../" }  } } +/
 void main() {
-    import std.range : take;
-    import std.random : Random, uniform;
 
     import zug.tap;
     import libzipd;
