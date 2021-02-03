@@ -90,7 +90,6 @@ struct Archive
         string strip_path = path;
 
         foreach (dir_entry; path.dirEntries(SpanMode.depth)) {
-            import std.stdio: writeln;
             if (dir_entry.isDir) {
                 string stripped_path = dir_entry.name.relativePath(strip_path);
                 zip_int64_t first_index;
@@ -186,11 +185,9 @@ struct Archive
             }
             else
             {
-                import std.stdio: writeln;
-                writeln(index);
                 zip_file_t* file_entry = zip_fopen_index(this.archive, index, 0);
                 if (file_entry is null) {
-                    throw new Exception(format!"file %s could not be opened: %s"(file_name_string, zip_strerror(this.archive).to!string ));
+                    throw new Exception(format!"file %s could not be opened: %s"(file_name_string.to!string, zip_strerror(this.archive).to!string ));
                 }
                 string destination_path_full = destination_path.buildPath(
                         file_name_string.to!string);
@@ -237,18 +234,6 @@ struct Archive
     void revert(){
         this.archive.zip_unchange_all();
     }
-
-    // ~this()
-    // {
-    //     import std.stdio:writeln;
-
-    //     this.archive.zip_close();
-    //     if (this.archive is null) {
-    //         writeln("aaaaaaaaaaaaaaaaa ");
-    //     } else {
-    //         writeln("noooooooooooooot nuuuuuuuuuuuul ", this.archive);
-    //     }
-    // }
 
     long entries_count() {
         return zip_get_num_entries(this.archive, ZIP_FL_UNCHANGED);
