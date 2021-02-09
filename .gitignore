@@ -13,6 +13,7 @@
 
 # Executables
 *.exe
+t/t001
 
 # DUB
 .dub
