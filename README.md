@@ -65,3 +65,9 @@ libzipd.libziph is not exported by default so you must import it explicitly
   - create password protected archive
   - better documentation
 
+# HOW TO RUN THE TESTS
+
+    $ pwd
+    /work/libzip-d
+    $ dub t/t001.d
+
