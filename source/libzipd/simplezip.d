@@ -155,7 +155,7 @@ struct Archive
         import std.stdio : File;
         import std.format : format;
         import std.file : exists, mkdirRecurse;
-        import std.path : buildPath;
+        import std.path : buildPath, dirName;
         import std.conv : to;
 
         if (!exists(destination_path))
@@ -189,8 +189,10 @@ struct Archive
                 if (file_entry is null) {
                     throw new Exception(format!"file %s could not be opened: %s"(file_name_string.to!string, zip_strerror(this.archive).to!string ));
                 }
-                string destination_path_full = destination_path.buildPath(
-                        file_name_string.to!string);
+                string destination_path_full = destination_path.buildPath(file_name_string.to!string);
+                if(!destination_path_full.dirName.exists) {
+                    destination_path_full.dirName.mkdirRecurse();
+                }
                 File destination_file = File(destination_path_full, "wb");
 
                 int sum = 0;
