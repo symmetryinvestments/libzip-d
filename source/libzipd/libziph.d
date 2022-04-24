@@ -92,18 +92,18 @@ struct dpp
     }
 }
 
-import std.stdint;
+import core.stdc.stdint;
 
 extern (C)
 {
-    alias zip_uint64_t = std.stdint.uint64_t;
-    alias zip_int64_t = std.stdint.int64_t;
-    alias zip_uint32_t = std.stdint.uint32_t;
-    alias zip_int32_t = std.stdint.int32_t;
-    alias zip_uint16_t = std.stdint.uint16_t;
-    alias zip_int16_t = std.stdint.int16_t;
-    alias zip_uint8_t = std.stdint.uint8_t;
-    alias zip_int8_t = std.stdint.int8_t;
+    alias zip_uint64_t = core.stdc.stdint.uint64_t;
+    alias zip_int64_t = core.stdc.stdint.int64_t;
+    alias zip_uint32_t = core.stdc.stdint.uint32_t;
+    alias zip_int32_t = core.stdc.stdint.int32_t;
+    alias zip_uint16_t = core.stdc.stdint.uint16_t;
+    alias zip_int16_t = core.stdc.stdint.int16_t;
+    alias zip_uint8_t = core.stdc.stdint.uint8_t;
+    alias zip_int8_t = core.stdc.stdint.int8_t;
     int zip_unchange_archive(zip*) @nogc nothrow;
     int zip_unchange_all(zip*) @nogc nothrow;
     int zip_unchange(zip*, zip_uint64_t) @nogc nothrow;
