@@ -96,14 +96,14 @@ import std.stdint;
 
 extern (C)
 {
-    alias zip_uint64_t = uint64_t;
-    alias zip_int64_t = int64_t;
-    alias zip_uint32_t = uint32_t;
-    alias zip_int32_t = int32_t;
-    alias zip_uint16_t = uint16_t;
-    alias zip_int16_t = int16_t;
-    alias zip_uint8_t = uint8_t;
-    alias zip_int8_t = int8_t;
+    alias zip_uint64_t = std.stdint.uint64_t;
+    alias zip_int64_t = std.stdint.int64_t;
+    alias zip_uint32_t = std.stdint.uint32_t;
+    alias zip_int32_t = std.stdint.int32_t;
+    alias zip_uint16_t = std.stdint.uint16_t;
+    alias zip_int16_t = std.stdint.int16_t;
+    alias zip_uint8_t = std.stdint.uint8_t;
+    alias zip_int8_t = std.stdint.int8_t;
     int zip_unchange_archive(zip*) @nogc nothrow;
     int zip_unchange_all(zip*) @nogc nothrow;
     int zip_unchange(zip*, zip_uint64_t) @nogc nothrow;
