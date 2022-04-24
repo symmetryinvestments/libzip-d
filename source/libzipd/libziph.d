@@ -94,7 +94,6 @@ struct dpp
 
 extern (C)
 {
-    alias size_t = c_ulong;
     alias zip_uint64_t = c_ulong;
     alias zip_int64_t = c_long;
     alias zip_uint32_t = uint;
