@@ -106,45 +106,45 @@ extern (C)
     alias zip_int8_t = int8_t;
     int zip_unchange_archive(zip*) @nogc nothrow;
     int zip_unchange_all(zip*) @nogc nothrow;
-    int zip_unchange(zip*, c_ulong) @nogc nothrow;
+    int zip_unchange(zip*, zip_uint64_t) @nogc nothrow;
     const(char)* zip_strerror(zip*) @nogc nothrow;
     void zip_stat_init(zip_stat*) @nogc nothrow;
-    int zip_stat_index(zip*, c_ulong, uint, zip_stat*) @nogc nothrow;
+    int zip_stat_index(zip*, zip_uint64_t, uint, zip_stat*) @nogc nothrow;
     pragma(mangle, "zip_stat") int zip_stat_(zip*, const(char)*, uint, zip_stat*) @nogc nothrow;
-    zip_source* zip_source_zip(zip*, zip*, c_ulong, uint, c_ulong, c_long) @nogc nothrow;
-    c_long zip_source_write(zip_source*, const(void)*, c_ulong) @nogc nothrow;
-    c_long zip_source_tell_write(zip_source*) @nogc nothrow;
-    c_long zip_source_tell(zip_source*) @nogc nothrow;
+    zip_source* zip_source_zip(zip*, zip*, zip_uint64_t, uint, zip_uint64_t, zip_int64_t) @nogc nothrow;
+    zip_int64_t zip_source_write(zip_source*, const(void)*, zip_uint64_t) @nogc nothrow;
+    zip_int64_t zip_source_tell_write(zip_source*) @nogc nothrow;
+    zip_int64_t zip_source_tell(zip_source*) @nogc nothrow;
     int zip_source_stat(zip_source*, zip_stat*) @nogc nothrow;
-    int zip_source_seek_write(zip_source*, c_long, int) @nogc nothrow;
-    c_long zip_source_seek_compute_offset(c_ulong, c_ulong, void*, c_ulong, zip_error*) @nogc nothrow;
-    int zip_source_seek(zip_source*, c_long, int) @nogc nothrow;
+    int zip_source_seek_write(zip_source*, zip_int64_t, int) @nogc nothrow;
+    zip_int64_t zip_source_seek_compute_offset(zip_uint64_t, zip_uint64_t, void*, zip_uint64_t, zip_error*) @nogc nothrow;
+    int zip_source_seek(zip_source*, zip_int64_t, int) @nogc nothrow;
     void zip_source_rollback_write(zip_source*) @nogc nothrow;
-    c_long zip_source_read(zip_source*, void*, c_ulong) @nogc nothrow;
+    zip_int64_t zip_source_read(zip_source*, void*, zip_uint64_t) @nogc nothrow;
     int zip_source_open(zip_source*) @nogc nothrow;
-    c_long zip_source_make_command_bitmap(zip_source_cmd, ...) @nogc nothrow;
+    zip_int64_t zip_source_make_command_bitmap(zip_source_cmd, ...) @nogc nothrow;
     void zip_source_keep(zip_source*) @nogc nothrow;
     int zip_source_is_deleted(zip_source*) @nogc nothrow;
-    zip_source* zip_source_function_create(c_long function(void*, void*,
-            c_ulong, zip_source_cmd), void*, zip_error*) @nogc nothrow;
-    zip_source* zip_source_function(zip*, c_long function(void*, void*,
-            c_ulong, zip_source_cmd), void*) @nogc nothrow;
+    zip_source* zip_source_function_create(zip_int64_t function(void*, void*,
+            zip_uint64_t, zip_source_cmd), void*, zip_error*) @nogc nothrow;
+    zip_source* zip_source_function(zip*, zip_int64_t function(void*, void*,
+            zip_uint64_t, zip_source_cmd), void*) @nogc nothrow;
     void zip_source_free(zip_source*) @nogc nothrow;
-    zip_source* zip_source_filep_create(_IO_FILE*, c_ulong, c_long, zip_error*) @nogc nothrow;
-    zip_source* zip_source_filep(zip*, _IO_FILE*, c_ulong, c_long) @nogc nothrow;
-    zip_source* zip_source_file_create(const(char)*, c_ulong, c_long, zip_error*) @nogc nothrow;
-    zip_source* zip_source_file(zip*, const(char)*, c_ulong, c_long) @nogc nothrow;
+    zip_source* zip_source_filep_create(_IO_FILE*, zip_uint64_t, zip_int64_t, zip_error*) @nogc nothrow;
+    zip_source* zip_source_filep(zip*, _IO_FILE*, zip_uint64_t, zip_int64_t) @nogc nothrow;
+    zip_source* zip_source_file_create(const(char)*, zip_uint64_t, zip_int64_t, zip_error*) @nogc nothrow;
+    zip_source* zip_source_file(zip*, const(char)*, zip_uint64_t, zip_int64_t) @nogc nothrow;
     zip_error* zip_source_error(zip_source*) @nogc nothrow;
     int zip_source_commit_write(zip_source*) @nogc nothrow;
     int zip_source_close(zip_source*) @nogc nothrow;
     zip_source* zip_source_buffer_fragment_create(const(zip_buffer_fragment)*,
-            c_ulong, int, zip_error*) @nogc nothrow;
-    zip_source* zip_source_buffer_fragment(zip*, const(zip_buffer_fragment)*, c_ulong, int) @nogc nothrow;
-    zip_source* zip_source_buffer_create(const(void)*, c_ulong, int, zip_error*) @nogc nothrow;
-    zip_source* zip_source_buffer(zip*, const(void)*, c_ulong, int) @nogc nothrow;
-    int zip_source_begin_write_cloning(zip_source*, c_ulong) @nogc nothrow;
+            zip_uint64_t, int, zip_error*) @nogc nothrow;
+    zip_source* zip_source_buffer_fragment(zip*, const(zip_buffer_fragment)*, zip_uint64_t, int) @nogc nothrow;
+    zip_source* zip_source_buffer_create(const(void)*, zip_uint64_t, int, zip_error*) @nogc nothrow;
+    zip_source* zip_source_buffer(zip*, const(void)*, zip_uint64_t, int) @nogc nothrow;
+    int zip_source_begin_write_cloning(zip_source*, zip_uint64_t) @nogc nothrow;
     int zip_source_begin_write(zip_source*) @nogc nothrow;
-    int zip_set_file_compression(zip*, c_ulong, int, uint) @nogc nothrow;
+    int zip_set_file_compression(zip*, zip_uint64_t, int, uint) @nogc nothrow;
     int zip_set_default_password(zip*, const(char)*) @nogc nothrow;
     int zip_set_archive_flag(zip*, uint, int) @nogc nothrow;
     int zip_set_archive_comment(zip*, const(char)*, ushort) @nogc nothrow;
@@ -152,41 +152,41 @@ extern (C)
             void function(zip*, double, void*), void function(void*), void*) @nogc nothrow;
     zip* zip_open_from_source(zip_source*, int, zip_error*) @nogc nothrow;
     zip* zip_open(const(char)*, int, int*) @nogc nothrow;
-    c_long zip_name_locate(zip*, const(char)*, uint) @nogc nothrow;
+    zip_int64_t zip_name_locate(zip*, const(char)*, uint) @nogc nothrow;
     const(char)* zip_libzip_version() @nogc nothrow;
-    c_long zip_get_num_entries(zip*, uint) @nogc nothrow;
-    const(char)* zip_get_name(zip*, c_ulong, uint) @nogc nothrow;
+    zip_int64_t zip_get_num_entries(zip*, uint) @nogc nothrow;
+    const(char)* zip_get_name(zip*, zip_uint64_t, uint) @nogc nothrow;
     int zip_get_archive_flag(zip*, uint, uint) @nogc nothrow;
     const(char)* zip_get_archive_comment(zip*, int*, uint) @nogc nothrow;
-    c_long zip_ftell(zip_file*) @nogc nothrow;
-    byte zip_fseek(zip_file*, c_long, int) @nogc nothrow;
-    c_long zip_fread(zip_file*, void*, c_ulong) @nogc nothrow;
-    zip_file* zip_fopen_index_encrypted(zip*, c_ulong, uint, const(char)*) @nogc nothrow;
-    zip_file* zip_fopen_index(zip*, c_ulong, uint) @nogc nothrow;
+    zip_int64_t zip_ftell(zip_file*) @nogc nothrow;
+    byte zip_fseek(zip_file*, zip_int64_t, int) @nogc nothrow;
+    zip_int64_t zip_fread(zip_file*, void*, zip_uint64_t) @nogc nothrow;
+    zip_file* zip_fopen_index_encrypted(zip*, zip_uint64_t, uint, const(char)*) @nogc nothrow;
+    zip_file* zip_fopen_index(zip*, zip_uint64_t, uint) @nogc nothrow;
     zip_file* zip_fopen_encrypted(zip*, const(char)*, uint, const(char)*) @nogc nothrow;
     zip_file* zip_fopen(zip*, const(char)*, uint) @nogc nothrow;
     const(char)* zip_file_strerror(zip_file*) @nogc nothrow;
-    int zip_file_set_mtime(zip*, c_ulong, c_long, uint) @nogc nothrow;
-    int zip_file_set_external_attributes(zip*, c_ulong, uint, ubyte, uint) @nogc nothrow;
-    int zip_file_set_encryption(zip*, c_ulong, ushort, const(char)*) @nogc nothrow;
-    int zip_file_set_comment(zip*, c_ulong, const(char)*, ushort, uint) @nogc nothrow;
-    int zip_file_replace(zip*, c_ulong, zip_source*, uint) @nogc nothrow;
-    int zip_file_rename(zip*, c_ulong, const(char)*, uint) @nogc nothrow;
-    int zip_file_get_external_attributes(zip*, c_ulong, uint, ubyte*, uint*) @nogc nothrow;
+    int zip_file_set_mtime(zip*, zip_uint64_t, zip_int64_t, uint) @nogc nothrow;
+    int zip_file_set_external_attributes(zip*, zip_uint64_t, uint, ubyte, uint) @nogc nothrow;
+    int zip_file_set_encryption(zip*, zip_uint64_t, ushort, const(char)*) @nogc nothrow;
+    int zip_file_set_comment(zip*, zip_uint64_t, const(char)*, ushort, uint) @nogc nothrow;
+    int zip_file_replace(zip*, zip_uint64_t, zip_source*, uint) @nogc nothrow;
+    int zip_file_rename(zip*, zip_uint64_t, const(char)*, uint) @nogc nothrow;
+    int zip_file_get_external_attributes(zip*, zip_uint64_t, uint, ubyte*, uint*) @nogc nothrow;
     zip_error* zip_file_get_error(zip_file*) @nogc nothrow;
-    const(char)* zip_file_get_comment(zip*, c_ulong, uint*, uint) @nogc nothrow;
-    const(ubyte)* zip_file_extra_field_get_by_id(zip*, c_ulong, ushort, ushort, ushort*, uint) @nogc nothrow;
-    const(ubyte)* zip_file_extra_field_get(zip*, c_ulong, ushort, ushort*, ushort*, uint) @nogc nothrow;
-    short zip_file_extra_fields_count_by_id(zip*, c_ulong, ushort, uint) @nogc nothrow;
-    short zip_file_extra_fields_count(zip*, c_ulong, uint) @nogc nothrow;
-    int zip_file_extra_field_set(zip*, c_ulong, ushort, ushort, const(ubyte)*, ushort, uint) @nogc nothrow;
-    int zip_file_extra_field_delete_by_id(zip*, c_ulong, ushort, ushort, uint) @nogc nothrow;
-    int zip_file_extra_field_delete(zip*, c_ulong, ushort, uint) @nogc nothrow;
+    const(char)* zip_file_get_comment(zip*, zip_uint64_t, uint*, uint) @nogc nothrow;
+    const(ubyte)* zip_file_extra_field_get_by_id(zip*, zip_uint64_t, ushort, ushort, ushort*, uint) @nogc nothrow;
+    const(ubyte)* zip_file_extra_field_get(zip*, zip_uint64_t, ushort, ushort*, ushort*, uint) @nogc nothrow;
+    short zip_file_extra_fields_count_by_id(zip*, zip_uint64_t, ushort, uint) @nogc nothrow;
+    short zip_file_extra_fields_count(zip*, zip_uint64_t, uint) @nogc nothrow;
+    int zip_file_extra_field_set(zip*, zip_uint64_t, ushort, ushort, const(ubyte)*, ushort, uint) @nogc nothrow;
+    int zip_file_extra_field_delete_by_id(zip*, zip_uint64_t, ushort, ushort, uint) @nogc nothrow;
+    int zip_file_extra_field_delete(zip*, zip_uint64_t, ushort, uint) @nogc nothrow;
     void zip_file_error_clear(zip_file*) @nogc nothrow;
-    c_long zip_file_add(zip*, const(char)*, zip_source*, uint) @nogc nothrow;
+    zip_int64_t zip_file_add(zip*, const(char)*, zip_source*, uint) @nogc nothrow;
     zip* zip_fdopen(int, int, int*) @nogc nothrow;
     int zip_fclose(zip_file*) @nogc nothrow;
-    c_long zip_error_to_data(const(zip_error)*, void*, c_ulong) @nogc nothrow;
+    zip_int64_t zip_error_to_data(const(zip_error)*, void*, zip_uint64_t) @nogc nothrow;
     int zip_error_system_type(const(zip_error)*) @nogc nothrow;
     const(char)* zip_error_strerror(zip_error*) @nogc nothrow;
     void zip_error_set(zip_error*, int, int) @nogc nothrow;
@@ -198,24 +198,24 @@ extern (C)
     void zip_error_clear(zip*) @nogc nothrow;
     zip_error* zip_get_error(zip*) @nogc nothrow;
     void zip_discard(zip*) @nogc nothrow;
-    c_long zip_dir_add(zip*, const(char)*, uint) @nogc nothrow;
-    int zip_delete(zip*, c_ulong) @nogc nothrow;
+    zip_int64_t zip_dir_add(zip*, const(char)*, uint) @nogc nothrow;
+    int zip_delete(zip*, zip_uint64_t) @nogc nothrow;
     int zip_close(zip*) @nogc nothrow;
     void zip_file_error_get(zip_file*, int*, int*) @nogc nothrow;
-    int zip_error_to_str(char*, c_ulong, int, int) @nogc nothrow;
+    int zip_error_to_str(char*, zip_uint64_t, int, int) @nogc nothrow;
     void zip_error_get(zip*, int*, int*) @nogc nothrow;
     int zip_error_get_sys_type(int) @nogc nothrow;
-    int zip_set_file_comment(zip*, c_ulong, const(char)*, int) @nogc nothrow;
-    int zip_replace(zip*, c_ulong, zip_source*) @nogc nothrow;
-    int zip_rename(zip*, c_ulong, const(char)*) @nogc nothrow;
+    int zip_set_file_comment(zip*, zip_uint64_t, const(char)*, int) @nogc nothrow;
+    int zip_replace(zip*, zip_uint64_t, zip_source*) @nogc nothrow;
+    int zip_rename(zip*, zip_uint64_t, const(char)*) @nogc nothrow;
     int zip_get_num_files(zip*) @nogc nothrow;
-    const(char)* zip_get_file_comment(zip*, c_ulong, int*, int) @nogc nothrow;
-    c_long zip_add_dir(zip*, const(char)*) @nogc nothrow;
-    c_long zip_add(zip*, const(char)*, zip_source*) @nogc nothrow;
+    const(char)* zip_get_file_comment(zip*, zip_uint64_t, int*, int) @nogc nothrow;
+    zip_int64_t zip_add_dir(zip*, const(char)*) @nogc nothrow;
+    zip_int64_t zip_add(zip*, const(char)*, zip_source*) @nogc nothrow;
     void zip_register_progress_callback(zip*, void function(double)) @nogc nothrow;
     alias zip_progress_callback_t = void function(double);
     alias zip_progress_callback = void function(zip*, double, void*);
-    alias zip_source_callback = c_long function(void*, void*, c_ulong, zip_source_cmd);
+    alias zip_source_callback = zip_int64_t function(void*, void*, zip_uint64_t, zip_source_cmd);
     alias zip_flags_t = uint;
     alias zip_buffer_fragment_t = zip_buffer_fragment;
     alias zip_stat_t = zip_stat;
@@ -229,17 +229,17 @@ extern (C)
     struct zip_buffer_fragment
     {
         ubyte* data;
-        c_ulong length;
+        zip_uint64_t length;
     }
 
     struct zip_stat
     {
-        c_ulong valid;
+        zip_uint64_t valid;
         const(char)* name;
-        c_ulong index;
-        c_ulong size;
-        c_ulong comp_size;
-        c_long mtime;
+        zip_uint64_t index;
+        zip_uint64_t size;
+        zip_uint64_t comp_size;
+        zip_int64_t mtime;
         uint crc;
         ushort comp_method;
         ushort encryption_method;
@@ -256,7 +256,7 @@ extern (C)
     alias zip_source_args_seek_t = zip_source_args_seek;
     struct zip_source_args_seek
     {
-        c_long offset;
+        zip_int64_t offset;
         int whence;
     }
 
@@ -301,12 +301,12 @@ extern (C)
     enum ZIP_SOURCE_REMOVE = zip_source_cmd.ZIP_SOURCE_REMOVE;
     enum ZIP_SOURCE_GET_COMPRESSION_FLAGS = zip_source_cmd.ZIP_SOURCE_GET_COMPRESSION_FLAGS;
     enum ZIP_SOURCE_BEGIN_WRITE_CLONING = zip_source_cmd.ZIP_SOURCE_BEGIN_WRITE_CLONING;
-    alias fsfilcnt_t = c_ulong;
-    alias fsblkcnt_t = c_ulong;
-    alias blkcnt_t = c_long;
-    alias blksize_t = c_long;
-    alias register_t = c_long;
-    alias u_int64_t = c_ulong;
+    alias fsfilcnt_t = zip_uint64_t;
+    alias fsblkcnt_t = zip_uint64_t;
+    alias blkcnt_t = zip_int64_t;
+    alias blksize_t = zip_int64_t;
+    alias register_t = zip_int64_t;
+    alias u_int64_t = zip_uint64_t;
     alias u_int32_t = uint;
     alias u_int16_t = ushort;
     alias u_int8_t = ubyte;
@@ -316,54 +316,54 @@ extern (C)
     alias id_t = uint;
     alias pid_t = int;
     alias uid_t = uint;
-    alias nlink_t = c_ulong;
+    alias nlink_t = zip_uint64_t;
     alias mode_t = uint;
     alias gid_t = uint;
-    alias dev_t = c_ulong;
-    alias ino_t = c_ulong;
-    alias loff_t = c_long;
+    alias dev_t = zip_uint64_t;
+    alias ino_t = zip_uint64_t;
+    alias loff_t = zip_int64_t;
     alias fsid_t = __fsid_t;
-    alias u_quad_t = c_ulong;
-    alias quad_t = c_long;
-    alias u_long = c_ulong;
+    alias u_quad_t = zip_uint64_t;
+    alias quad_t = zip_int64_t;
+    alias u_long = zip_uint64_t;
     alias u_int = uint;
     alias u_short = ushort;
     alias u_char = ubyte;
     int pselect(int, fd_set*, fd_set*, fd_set*, const(timespec)*, const(__sigset_t)*) @nogc nothrow;
     int select(int, fd_set*, fd_set*, fd_set*, timeval*) @nogc nothrow;
-    alias fd_mask = c_long;
+    alias fd_mask = zip_int64_t;
     struct fd_set
     {
-        c_long[16] __fds_bits;
+        zip_int64_t[16] __fds_bits;
     }
 
-    alias __fd_mask = c_long;
-    alias suseconds_t = c_long;
+    alias __fd_mask = zip_int64_t;
+    alias suseconds_t = zip_int64_t;
     alias int_least8_t = byte;
     alias int_least16_t = short;
     alias int_least32_t = int;
-    alias int_least64_t = c_long;
+    alias int_least64_t = zip_int64_t;
     alias uint_least8_t = ubyte;
     alias uint_least16_t = ushort;
     alias uint_least32_t = uint;
-    alias uint_least64_t = c_ulong;
+    alias uint_least64_t = zip_uint64_t;
     alias int_fast8_t = byte;
-    alias int_fast16_t = c_long;
-    alias int_fast32_t = c_long;
-    alias int_fast64_t = c_long;
+    alias int_fast16_t = zip_int64_t;
+    alias int_fast32_t = zip_int64_t;
+    alias int_fast64_t = zip_int64_t;
     alias uint_fast8_t = ubyte;
-    alias uint_fast16_t = c_ulong;
-    alias uint_fast32_t = c_ulong;
-    alias uint_fast64_t = c_ulong;
-    alias intptr_t = c_long;
-    alias uintptr_t = c_ulong;
-    alias intmax_t = c_long;
-    alias uintmax_t = c_ulong;
-    static c_ulong __uint64_identity(c_ulong) @nogc nothrow;
+    alias uint_fast16_t = zip_uint64_t;
+    alias uint_fast32_t = zip_uint64_t;
+    alias uint_fast64_t = zip_uint64_t;
+    alias intptr_t = zip_int64_t;
+    alias uintptr_t = zip_uint64_t;
+    alias intmax_t = zip_int64_t;
+    alias uintmax_t = zip_uint64_t;
+    static zip_uint64_t __uint64_identity(zip_uint64_t) @nogc nothrow;
     static uint __uint32_identity(uint) @nogc nothrow;
     static ushort __uint16_identity(ushort) @nogc nothrow;
     alias timer_t = void*;
-    alias time_t = c_long;
+    alias time_t = zip_int64_t;
     struct tm
     {
         int tm_sec;
@@ -375,20 +375,20 @@ extern (C)
         int tm_wday;
         int tm_yday;
         int tm_isdst;
-        c_long tm_gmtoff;
+        zip_int64_t tm_gmtoff;
         const(char)* tm_zone;
     }
 
     struct timeval
     {
-        c_long tv_sec;
-        c_long tv_usec;
+        zip_int64_t tv_sec;
+        zip_int64_t tv_usec;
     }
 
     struct timespec
     {
-        c_long tv_sec;
-        c_long tv_nsec;
+        zip_int64_t tv_sec;
+        zip_int64_t tv_nsec;
     }
 
     struct itimerspec
@@ -404,12 +404,12 @@ extern (C)
     alias sigset_t = __sigset_t;
     alias locale_t = __locale_struct*;
     alias clockid_t = int;
-    alias clock_t = c_long;
-    alias off_t = c_long;
-    alias ssize_t = c_long;
+    alias clock_t = zip_int64_t;
+    alias off_t = zip_int64_t;
+    alias ssize_t = zip_int64_t;
     struct __sigset_t
     {
-        c_ulong[16] __val;
+        zip_uint64_t[16] __val;
     }
 
     alias fpos_t = _G_fpos_t;
@@ -437,7 +437,7 @@ extern (C)
 
     struct _G_fpos_t
     {
-        c_long __pos;
+        zip_int64_t __pos;
         __mbstate_t __state;
     }
 
@@ -447,7 +447,7 @@ extern (C)
     extern __gshared _IO_FILE* stderr;
     struct _G_fpos64_t
     {
-        c_long __pos;
+        zip_int64_t __pos;
         __mbstate_t __state;
     }
 
@@ -465,11 +465,11 @@ extern (C)
     _IO_FILE* fopen(const(char)*, const(char)*) @nogc nothrow;
     _IO_FILE* freopen(const(char)*, const(char)*, _IO_FILE*) @nogc nothrow;
     _IO_FILE* fdopen(int, const(char)*) @nogc nothrow;
-    _IO_FILE* fmemopen(void*, c_ulong, const(char)*) @nogc nothrow;
-    _IO_FILE* open_memstream(char**, c_ulong*) @nogc nothrow;
+    _IO_FILE* fmemopen(void*, zip_uint64_t, const(char)*) @nogc nothrow;
+    _IO_FILE* open_memstream(char**, zip_uint64_t*) @nogc nothrow;
     void setbuf(_IO_FILE*, char*) @nogc nothrow;
-    int setvbuf(_IO_FILE*, char*, int, c_ulong) @nogc nothrow;
-    void setbuffer(_IO_FILE*, char*, c_ulong) @nogc nothrow;
+    int setvbuf(_IO_FILE*, char*, int, zip_uint64_t) @nogc nothrow;
+    void setbuffer(_IO_FILE*, char*, zip_uint64_t) @nogc nothrow;
     void setlinebuf(_IO_FILE*) @nogc nothrow;
     int fprintf(_IO_FILE*, const(char)*, ...) @nogc nothrow;
     int printf(const(char)*, ...) @nogc nothrow;
@@ -477,8 +477,8 @@ extern (C)
     int vfprintf(_IO_FILE*, const(char)*, va_list*) @nogc nothrow;
     int vprintf(const(char)*, va_list*) @nogc nothrow;
     int vsprintf(char*, const(char)*, va_list*) @nogc nothrow;
-    int snprintf(char*, c_ulong, const(char)*, ...) @nogc nothrow;
-    int vsnprintf(char*, c_ulong, const(char)*, va_list*) @nogc nothrow;
+    int snprintf(char*, zip_uint64_t, const(char)*, ...) @nogc nothrow;
+    int vsnprintf(char*, zip_uint64_t, const(char)*, va_list*) @nogc nothrow;
     int vdprintf(int, const(char)*, va_list*) @nogc nothrow;
     int dprintf(int, const(char)*, ...) @nogc nothrow;
     int fscanf(_IO_FILE*, const(char)*, ...) @nogc nothrow;
@@ -502,21 +502,21 @@ extern (C)
     int getw(_IO_FILE*) @nogc nothrow;
     int putw(int, _IO_FILE*) @nogc nothrow;
     char* fgets(char*, int, _IO_FILE*) @nogc nothrow;
-    c_long __getdelim(char**, c_ulong*, int, _IO_FILE*) @nogc nothrow;
-    c_long getdelim(char**, c_ulong*, int, _IO_FILE*) @nogc nothrow;
-    c_long getline(char**, c_ulong*, _IO_FILE*) @nogc nothrow;
+    zip_int64_t __getdelim(char**, zip_uint64_t*, int, _IO_FILE*) @nogc nothrow;
+    zip_int64_t getdelim(char**, zip_uint64_t*, int, _IO_FILE*) @nogc nothrow;
+    zip_int64_t getline(char**, zip_uint64_t*, _IO_FILE*) @nogc nothrow;
     int fputs(const(char)*, _IO_FILE*) @nogc nothrow;
     int puts(const(char)*) @nogc nothrow;
     int ungetc(int, _IO_FILE*) @nogc nothrow;
-    c_ulong fread(void*, c_ulong, c_ulong, _IO_FILE*) @nogc nothrow;
-    c_ulong fwrite(const(void)*, c_ulong, c_ulong, _IO_FILE*) @nogc nothrow;
-    c_ulong fread_unlocked(void*, c_ulong, c_ulong, _IO_FILE*) @nogc nothrow;
-    c_ulong fwrite_unlocked(const(void)*, c_ulong, c_ulong, _IO_FILE*) @nogc nothrow;
-    int fseek(_IO_FILE*, c_long, int) @nogc nothrow;
-    c_long ftell(_IO_FILE*) @nogc nothrow;
+    zip_uint64_t fread(void*, zip_uint64_t, zip_uint64_t, _IO_FILE*) @nogc nothrow;
+    zip_uint64_t fwrite(const(void)*, zip_uint64_t, zip_uint64_t, _IO_FILE*) @nogc nothrow;
+    zip_uint64_t fread_unlocked(void*, zip_uint64_t, zip_uint64_t, _IO_FILE*) @nogc nothrow;
+    zip_uint64_t fwrite_unlocked(const(void)*, zip_uint64_t, zip_uint64_t, _IO_FILE*) @nogc nothrow;
+    int fseek(_IO_FILE*, zip_int64_t, int) @nogc nothrow;
+    zip_int64_t ftell(_IO_FILE*) @nogc nothrow;
     void rewind(_IO_FILE*) @nogc nothrow;
-    int fseeko(_IO_FILE*, c_long, int) @nogc nothrow;
-    c_long ftello(_IO_FILE*) @nogc nothrow;
+    int fseeko(_IO_FILE*, zip_int64_t, int) @nogc nothrow;
+    zip_int64_t ftello(_IO_FILE*) @nogc nothrow;
     int fgetpos(_IO_FILE*, _G_fpos_t*) @nogc nothrow;
     int fsetpos(_IO_FILE*, const(_G_fpos_t)*) @nogc nothrow;
     void clearerr(_IO_FILE*) @nogc nothrow;
@@ -556,45 +556,45 @@ extern (C)
         _IO_FILE* _chain;
         int _fileno;
         int _flags2;
-        c_long _old_offset;
+        zip_int64_t _old_offset;
         ushort _cur_column;
         byte _vtable_offset;
         char[1] _shortbuf;
         void* _lock;
-        c_long _offset;
+        zip_int64_t _offset;
         _IO_codecvt* _codecvt;
         _IO_wide_data* _wide_data;
         _IO_FILE* _freeres_list;
         void* _freeres_buf;
-        c_ulong __pad5;
+        zip_uint64_t __pad5;
         int _mode;
         char[20] _unused2;
     }
 
-    c_long clock() @nogc nothrow;
-    c_long time(c_long*) @nogc nothrow;
-    double difftime(c_long, c_long) @nogc nothrow;
-    c_long mktime(tm*) @nogc nothrow;
-    c_ulong strftime(char*, c_ulong, const(char)*, const(tm)*) @nogc nothrow;
-    c_ulong strftime_l(char*, c_ulong, const(char)*, const(tm)*, __locale_struct*) @nogc nothrow;
-    tm* gmtime(const(c_long)*) @nogc nothrow;
-    tm* localtime(const(c_long)*) @nogc nothrow;
-    tm* gmtime_r(const(c_long)*, tm*) @nogc nothrow;
-    tm* localtime_r(const(c_long)*, tm*) @nogc nothrow;
+    zip_int64_t clock() @nogc nothrow;
+    zip_int64_t time(zip_int64_t*) @nogc nothrow;
+    double difftime(zip_int64_t, zip_int64_t) @nogc nothrow;
+    zip_int64_t mktime(tm*) @nogc nothrow;
+    zip_uint64_t strftime(char*, zip_uint64_t, const(char)*, const(tm)*) @nogc nothrow;
+    zip_uint64_t strftime_l(char*, zip_uint64_t, const(char)*, const(tm)*, __locale_struct*) @nogc nothrow;
+    tm* gmtime(const(zip_int64_t)*) @nogc nothrow;
+    tm* localtime(const(zip_int64_t)*) @nogc nothrow;
+    tm* gmtime_r(const(zip_int64_t)*, tm*) @nogc nothrow;
+    tm* localtime_r(const(zip_int64_t)*, tm*) @nogc nothrow;
     char* asctime(const(tm)*) @nogc nothrow;
-    char* ctime(const(c_long)*) @nogc nothrow;
+    char* ctime(const(zip_int64_t)*) @nogc nothrow;
     char* asctime_r(const(tm)*, char*) @nogc nothrow;
-    char* ctime_r(const(c_long)*, char*) @nogc nothrow;
+    char* ctime_r(const(zip_int64_t)*, char*) @nogc nothrow;
     extern __gshared char*[2] __tzname;
     extern __gshared int __daylight;
-    extern __gshared c_long __timezone;
+    extern __gshared zip_int64_t __timezone;
     extern __gshared char*[2] tzname;
     void tzset() @nogc nothrow;
     extern __gshared int daylight;
-    extern __gshared c_long timezone;
+    extern __gshared zip_int64_t timezone;
     alias FILE = _IO_FILE;
-    c_long timegm(tm*) @nogc nothrow;
-    c_long timelocal(tm*) @nogc nothrow;
+    zip_int64_t timegm(tm*) @nogc nothrow;
+    zip_int64_t timelocal(tm*) @nogc nothrow;
     int dysize(int) @nogc nothrow;
     int nanosleep(const(timespec)*, timespec*) @nogc nothrow;
     int clock_getres(int, timespec*) @nogc nothrow;
@@ -611,21 +611,21 @@ extern (C)
     static ushort __bswap_16(ushort) @nogc nothrow;
     alias __sig_atomic_t = int;
     static uint __bswap_32(uint) @nogc nothrow;
-    static c_ulong __bswap_64(c_ulong) @nogc nothrow;
+    static zip_uint64_t __bswap_64(zip_uint64_t) @nogc nothrow;
     alias __socklen_t = uint;
-    alias __intptr_t = c_long;
+    alias __intptr_t = zip_int64_t;
     alias __caddr_t = char*;
-    alias __loff_t = c_long;
-    alias __syscall_ulong_t = c_ulong;
-    alias __syscall_slong_t = c_long;
-    alias __ssize_t = c_long;
-    alias __fsword_t = c_long;
-    alias __fsfilcnt64_t = c_ulong;
-    alias __fsfilcnt_t = c_ulong;
-    alias __fsblkcnt64_t = c_ulong;
-    alias __fsblkcnt_t = c_ulong;
-    alias __blkcnt64_t = c_long;
-    alias pthread_t = c_ulong;
+    alias __loff_t = zip_int64_t;
+    alias __syscall_ulong_t = zip_uint64_t;
+    alias __syscall_slong_t = zip_int64_t;
+    alias __ssize_t = zip_int64_t;
+    alias __fsword_t = zip_int64_t;
+    alias __fsfilcnt64_t = zip_uint64_t;
+    alias __fsfilcnt_t = zip_uint64_t;
+    alias __fsblkcnt64_t = zip_uint64_t;
+    alias __fsblkcnt_t = zip_uint64_t;
+    alias __blkcnt64_t = zip_int64_t;
+    alias pthread_t = zip_uint64_t;
     union pthread_mutexattr_t
     {
         char[4] __size;
@@ -643,14 +643,14 @@ extern (C)
     union pthread_attr_t
     {
         char[56] __size;
-        c_long __align;
+        zip_int64_t __align;
     }
 
     union pthread_mutex_t
     {
         __pthread_mutex_s __data;
         char[40] __size;
-        c_long __align;
+        zip_int64_t __align;
     }
 
     union pthread_cond_t
@@ -664,20 +664,20 @@ extern (C)
     {
         __pthread_rwlock_arch_t __data;
         char[56] __size;
-        c_long __align;
+        zip_int64_t __align;
     }
 
     union pthread_rwlockattr_t
     {
         char[8] __size;
-        c_long __align;
+        zip_int64_t __align;
     }
 
     alias pthread_spinlock_t = int;
     union pthread_barrier_t
     {
         char[32] __size;
-        c_long __align;
+        zip_int64_t __align;
     }
 
     union pthread_barrierattr_t
@@ -686,12 +686,12 @@ extern (C)
         int __align;
     }
 
-    alias __blkcnt_t = c_long;
-    alias __blksize_t = c_long;
+    alias __blkcnt_t = zip_int64_t;
+    alias __blksize_t = zip_int64_t;
     alias int8_t = byte;
     alias int16_t = short;
     alias int32_t = int;
-    alias int64_t = c_long;
+    alias int64_t = zip_int64_t;
     alias uint8_t = ubyte;
     alias uint16_t = ushort;
     alias uint32_t = uint;
@@ -724,11 +724,11 @@ extern (C)
         int __shared;
         byte __rwelision;
         ubyte[7] __pad1;
-        c_ulong __pad2;
+        zip_uint64_t __pad2;
         uint __flags;
     }
 
-    alias __suseconds_t = c_long;
+    alias __suseconds_t = zip_int64_t;
     extern __gshared int sys_nerr;
     extern __gshared const(const(char)*)[0] sys_errlist;
     alias __pthread_list_t = __pthread_internal_list;
@@ -820,49 +820,49 @@ extern (C)
     }
 
     alias __useconds_t = uint;
-    alias __time_t = c_long;
+    alias __time_t = zip_int64_t;
     alias __id_t = uint;
-    alias __rlim64_t = c_ulong;
-    alias __rlim_t = c_ulong;
-    alias __clock_t = c_long;
+    alias __rlim64_t = zip_uint64_t;
+    alias __rlim_t = zip_uint64_t;
+    alias __clock_t = zip_int64_t;
     alias __u_char = ubyte;
     alias __u_short = ushort;
     alias __u_int = uint;
-    alias __u_long = c_ulong;
+    alias __u_long = zip_uint64_t;
     alias __int8_t = byte;
     alias __uint8_t = ubyte;
     alias __int16_t = short;
     alias __uint16_t = ushort;
     alias __int32_t = int;
     alias __uint32_t = uint;
-    alias __int64_t = c_long;
-    alias __uint64_t = c_ulong;
+    alias __int64_t = zip_int64_t;
+    alias __uint64_t = zip_uint64_t;
     alias __int_least8_t = byte;
     alias __uint_least8_t = ubyte;
     alias __int_least16_t = short;
     alias __uint_least16_t = ushort;
     alias __int_least32_t = int;
     alias __uint_least32_t = uint;
-    alias __int_least64_t = c_long;
-    alias __uint_least64_t = c_ulong;
-    alias __quad_t = c_long;
-    alias __u_quad_t = c_ulong;
-    alias __intmax_t = c_long;
-    alias __uintmax_t = c_ulong;
+    alias __int_least64_t = zip_int64_t;
+    alias __uint_least64_t = zip_uint64_t;
+    alias __quad_t = zip_int64_t;
+    alias __u_quad_t = zip_uint64_t;
+    alias __intmax_t = zip_int64_t;
+    alias __uintmax_t = zip_uint64_t;
     struct __fsid_t
     {
         int[2] __val;
     }
 
     alias __pid_t = int;
-    alias __off64_t = c_long;
-    alias __off_t = c_long;
-    alias __nlink_t = c_ulong;
-    alias __dev_t = c_ulong;
+    alias __off64_t = zip_int64_t;
+    alias __off_t = zip_int64_t;
+    alias __nlink_t = zip_uint64_t;
+    alias __dev_t = zip_uint64_t;
     alias __uid_t = uint;
     alias __gid_t = uint;
-    alias __ino_t = c_ulong;
-    alias __ino64_t = c_ulong;
+    alias __ino_t = zip_uint64_t;
+    alias __ino64_t = zip_uint64_t;
     alias __mode_t = uint;
 
     static if (!is(typeof(__STD_TYPE)))
