@@ -92,16 +92,18 @@ struct dpp
     }
 }
 
+import std.stdint;
+
 extern (C)
 {
-    alias zip_uint64_t = c_ulong;
-    alias zip_int64_t = c_long;
-    alias zip_uint32_t = uint;
-    alias zip_int32_t = int;
-    alias zip_uint16_t = ushort;
-    alias zip_int16_t = short;
-    alias zip_uint8_t = ubyte;
-    alias zip_int8_t = byte;
+    alias zip_uint64_t = uint64_t;
+    alias zip_int64_t = int64_t;
+    alias zip_uint32_t = uint32_t;
+    alias zip_int32_t = int32_t;
+    alias zip_uint16_t = uint16_t;
+    alias zip_int16_t = int16_t;
+    alias zip_uint8_t = uint8_t;
+    alias zip_int8_t = int8_t;
     int zip_unchange_archive(zip*) @nogc nothrow;
     int zip_unchange_all(zip*) @nogc nothrow;
     int zip_unchange(zip*, c_ulong) @nogc nothrow;
